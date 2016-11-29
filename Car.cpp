@@ -1,0 +1,259 @@
+#include "Car.h"
+#include "models/chassi/chassi.h"
+#include "models/wheel/wheel.h"
+#include "models/gun/gun.h"
+
+void Car::body (float r,float g,float b){
+	glBindTexture (GL_TEXTURE_2D, carTex);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY_EXT);
+	glClientActiveTexture(GL_TEXTURE_2D);
+
+	glVertexPointer(3, GL_FLOAT, 0, chassiVerts);
+	glNormalPointer(GL_FLOAT, 0, chassiNormals);
+	glTexCoordPointer(2, GL_FLOAT, 0, chassiTexCoords);
+ 
+	glPushMatrix();
+ 	glDrawArrays(GL_TRIANGLES, 0, chassiNumVerts);
+	glPopMatrix();
+	
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY_EXT);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
+}	
+
+void Car::wheel (){
+
+	glBindTexture (GL_TEXTURE_2D, carTex);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY_EXT);
+	glClientActiveTexture(GL_TEXTURE_2D);
+
+	glVertexPointer(3, GL_FLOAT, 0, wheelVerts);
+	glNormalPointer(GL_FLOAT, 0, wheelNormals);
+	glTexCoordPointer(2, GL_FLOAT, 0, wheelTexCoords);
+ 
+	glPushMatrix();
+	glScalef(80.273425*0.00234324850820599,80.273425*0.00234324850820599,80.273425*0.00234324850820599);
+ 	glDrawArrays(GL_TRIANGLES, 0, wheelNumVerts);
+	glPopMatrix();	
+
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY_EXT);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
+
+}
+
+void Car::cannon(float r,float g,float b){
+
+	glBindTexture (GL_TEXTURE_2D, gunTex);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY_EXT);
+	glClientActiveTexture(GL_TEXTURE_2D);
+
+	glVertexPointer(3, GL_FLOAT, 0, gunVerts);
+	glNormalPointer(GL_FLOAT, 0, gunNormals);
+	glTexCoordPointer(2, GL_FLOAT, 0, gunTexCoords);
+ 
+	glPushMatrix();
+	glScalef(161.328201*0.00234324850820599,161.328201*0.00234324850820599,161.328201*0.00234324850820599);
+ 	glDrawArrays(GL_TRIANGLES, 0, gunNumVerts);
+	glPopMatrix();	
+
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY_EXT);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
+}
+
+void Car::draw(void){
+	float cannon_x = (1.79612187838555+7.93621087778903)*0.00234324850820599;
+	float cannon_z = (36.7102507390688-35.6207264253114)*0.00234324850820599;
+	float cannon_y = (162.187749878032-88.1413474731246)*0.00234324850820599;
+
+	glPushMatrix();
+		glTranslatef(this->x,this->y,this->size*12/30);
+		glRotatef(this->theta,0,0,1);
+		glRotatef(0,0,0,1);
+		glRotatef(90,1,0,0);
+		glScalef(this->size,this->size,this->size);
+		glPushMatrix();
+			glTranslatef(.22+.019,-.1,.2);              
+			wheel();
+		glPopMatrix();
+		glPushMatrix();
+			glTranslatef(-.22+.019,-.1,.2);
+			glRotatef(180,0,1,0);               
+			wheel();
+		glPopMatrix();
+		glPushMatrix();
+			glTranslatef(-.22+.019,-.1,-.48);
+			glRotatef(this->wheel_angle,0,1,0);  
+			glRotatef(180,0,1,0);               
+			wheel();
+		glPopMatrix();
+		glPushMatrix();
+			glTranslatef(.22+.019,-.1,-.48); 
+			glRotatef(this->wheel_angle,0,1,0);           
+			wheel();
+		glPopMatrix();
+
+		body(this->r,this->g,this->b);
+	
+		glPushMatrix();
+			glTranslatef(cannon_x, cannon_y, cannon_z);
+			glRotatef(this->cannon_angle,0,1,0);
+			cannon(this->r,this->g,this->b);
+		glPopMatrix();
+	glPopMatrix();
+}
+
+Car::Car (float r,float g,float b,float size){
+	this->r = r;
+	this->g = g;
+	this->b = b;
+	this->size = size;
+	this->wheel_sprite = 0;
+	this->cannon_angle = 0;
+	this->wheel_angle = 0;
+	this->x = 0;
+	this->y = 0;
+	this->theta = 0;
+	this->fire_flag = 0;
+	this->rotate_speed = 0.1;
+}
+
+Car::Car (){
+	this->r = 0;
+	this->g = 0;
+	this->b = 0;
+	this->size = 1;
+	this->wheel_sprite = 0;
+	this->cannon_angle = 0;
+	this->wheel_angle = 0;
+	this->x = 0;
+	this->y = 0;
+	this->theta = 0;
+	this->fire_flag = 0;
+	this->rotate_speed = 0.1;
+}
+
+void Car::set_color(float r, float g, float b){
+	this->r = r;
+	this->g = g;
+	this->b = b;
+}
+
+void Car::set_size(float size){
+	this->size = size;
+}
+
+void Car::left(float delta_t){
+	this->wheel_angle -= this->rotate_speed*delta_t;
+	if (this->wheel_angle < -45)
+		this->wheel_angle=-45;
+}
+void Car::right(float delta_t){
+	this->wheel_angle += this->rotate_speed*delta_t;
+	if (this->wheel_angle > 45)
+		this->wheel_angle=45;
+}
+void Car::forward(float delta_t){
+	this->wheel_sprite = (this->wheel_sprite+this->car_speed*delta_t*8/this->size);
+	if (this->wheel_sprite >= 4)
+		this->wheel_sprite -= 4;
+	this->x = this->x - delta_t*this->car_speed*sin(this->theta*M_PI/180);
+	this->y = this->y + delta_t*this->car_speed*cos(this->theta*M_PI/180);
+	this->theta = this->theta + delta_t*this->car_speed*tan(this->wheel_angle*M_PI/180);
+	
+	if (this->theta > 180)
+		this->theta -= 360;
+	if (this->theta < -180)
+		this->theta += 360;
+}
+
+void Car::back(float delta_t){
+	this->wheel_sprite = (this->wheel_sprite-this->car_speed*delta_t*8/this->size);
+	if (this->wheel_sprite < 0)
+		this->wheel_sprite += 4;
+	this->x = this->x + delta_t*this->car_speed*sin(this->theta*M_PI/180);
+	this->y = this->y - delta_t*this->car_speed*cos(this->theta*M_PI/180);
+	this->theta = this->theta - delta_t*this->car_speed*tan(this->wheel_angle*M_PI/180);
+
+	if (this->theta > 180)
+		this->theta -= 360;
+	if (this->theta < -180)
+		this->theta += 360;
+}
+
+void Car::inc_cannon_angle(float angle){
+	this->cannon_angle += (angle);
+	if (this->cannon_angle > 45)
+		this->cannon_angle = 45;
+	if (this->cannon_angle < -45)
+		this->cannon_angle = -45;
+}
+
+void Car::set_pos(float x,float y, float theta){
+	this->x = x;
+	this->y = y;
+	this->theta = theta;
+	if (this->theta > 180)
+		this->theta -= 360;
+	if (this->theta < -180)
+		this->theta += 360;
+}
+
+bool Car::on_lane(Circle lane_in, Circle lane_out){
+	float distancePlayerOutLane = sqrt(pow(lane_out.cx-this->x,2)+pow(lane_out.cy-this->y,2));
+	float distancePlayerInLane  = sqrt(pow(lane_in.cx-this->x,2)+pow(lane_in.cy-this->y,2));
+	bool insideOutLane = distancePlayerOutLane<lane_out.radius-this->size/2;
+	bool outsideInLane = distancePlayerOutLane>lane_in.radius+this->size/2;
+	return insideOutLane && outsideInLane;
+}
+
+Shot Car::fire (){
+	fire_flag = glutGet(GLUT_ELAPSED_TIME)+(GLdouble)100.0;
+	Shot s;
+	s.set_size(this->size/10);
+	s.set_speed(this->shot_speed);
+	float cannon_x = this->x - this->size*5/8*sin((this->theta+this->cannon_angle)*M_PI/180);
+	float cannon_y = this->y + this->size*5/8*cos((this->theta+this->cannon_angle)*M_PI/180);
+	s.set_pos(cannon_x,cannon_y,this->theta+this->cannon_angle);
+	return s;
+}
+
+void Car::set_speed(float speed){
+	this->car_speed = speed;
+}
+
+void Car::set_bullet_speed(float speed){
+	this->shot_speed = speed;
+}
+
+float Car::get_x(){
+	return this->x;
+}
+float Car::get_y(){
+	return this->y;
+}
+float Car::get_theta(){
+	return this->theta;
+}
+
+float Car::get_size(){
+	return this->size;
+}
+
+void Car::set_cannon_angle(float angle){
+	this->cannon_angle = angle;
+	if (this->cannon_angle > 45)
+		this->cannon_angle = 45;
+	if (this->cannon_angle < -45)
+		this->cannon_angle = -45;
+}
