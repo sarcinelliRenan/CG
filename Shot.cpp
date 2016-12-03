@@ -7,6 +7,7 @@ Shot::Shot (){
 	this->size = 10;
 	this->x = 0;
 	this->y = 0;
+	this->z = 0;
 	this->theta = 0;
 	this->phi = 0;
 	this->distance = 500;
@@ -33,8 +34,12 @@ void Shot::set_pos(float x, float y, float theta){
 	this->theta = theta;
 }
 
-void Shot::set_phi(float phi){
+void Shot::set_pos3d(float x, float y, float z, float theta, float phi){
+	this->x = x;
+	this->y = y;
+	this->theta = theta;
 	this->phi = phi;
+	this->z = z;
 }
 
 bool Shot::refresh_pos(float delta_t){
