@@ -28,4 +28,9 @@ typedef struct{
 void draw_rectangle (Rectangle rect);
 
 GLuint LoadTextureRAW( const char * filename );
+
+void draw_ground(Circle lane,GLuint gndTex);
+void draw_inner_wall(Circle circ,GLuint wallTex, float height);
+void draw_out_wall(Circle circ,GLuint wallTex, float height);
+void draw_start_mark(Rectangle rect,GLuint strTex);
 #endif

@@ -77,29 +77,33 @@ void Car::draw(void){
 	float cannon_y = (162.187749878032-88.1413474731246)*0.00234324850820599;
 
 	glPushMatrix();
-		glTranslatef(this->x,this->y,this->size*12/30);
+		glTranslatef(this->x,this->y,this->size/5.3);
 		glRotatef(this->theta,0,0,1);
 		glRotatef(0,0,0,1);
 		glRotatef(90,1,0,0);
 		glScalef(this->size,this->size,this->size);
 		glPushMatrix();
-			glTranslatef(.22+.019,-.1,.2);              
+			glTranslatef(.22+.019,-.1,.2); 
+			glRotatef(-this->wheel_rot,1,0,0);             
 			wheel();
 		glPopMatrix();
 		glPushMatrix();
 			glTranslatef(-.22+.019,-.1,.2);
+			glRotatef(-this->wheel_rot,1,0,0);
 			glRotatef(180,0,1,0);               
 			wheel();
 		glPopMatrix();
 		glPushMatrix();
 			glTranslatef(-.22+.019,-.1,-.48);
 			glRotatef(this->wheel_angle,0,1,0);  
+			glRotatef(-this->wheel_rot,1,0,0);
 			glRotatef(180,0,1,0);               
 			wheel();
 		glPopMatrix();
 		glPushMatrix();
 			glTranslatef(.22+.019,-.1,-.48); 
-			glRotatef(this->wheel_angle,0,1,0);           
+			glRotatef(this->wheel_angle,0,1,0);
+			glRotatef(-this->wheel_rot,1,0,0);           
 			wheel();
 		glPopMatrix();
 
@@ -108,6 +112,7 @@ void Car::draw(void){
 		glPushMatrix();
 			glTranslatef(cannon_x, cannon_y, cannon_z);
 			glRotatef(this->cannon_angle,0,1,0);
+			glRotatef(this->cannon_phi,1,0,0);
 			cannon(this->r,this->g,this->b);
 		glPopMatrix();
 	glPopMatrix();
@@ -118,8 +123,9 @@ Car::Car (float r,float g,float b,float size){
 	this->g = g;
 	this->b = b;
 	this->size = size;
-	this->wheel_sprite = 0;
+	this->wheel_rot = 0;
 	this->cannon_angle = 0;
+	this->cannon_phi = 0;
 	this->wheel_angle = 0;
 	this->x = 0;
 	this->y = 0;
@@ -133,8 +139,9 @@ Car::Car (){
 	this->g = 0;
 	this->b = 0;
 	this->size = 1;
-	this->wheel_sprite = 0;
+	this->wheel_rot = 0;
 	this->cannon_angle = 0;
+	this->cannon_phi = 0;
 	this->wheel_angle = 0;
 	this->x = 0;
 	this->y = 0;
@@ -164,9 +171,9 @@ void Car::right(float delta_t){
 		this->wheel_angle=45;
 }
 void Car::forward(float delta_t){
-	this->wheel_sprite = (this->wheel_sprite+this->car_speed*delta_t*8/this->size);
-	if (this->wheel_sprite >= 4)
-		this->wheel_sprite -= 4;
+	this->wheel_rot = (this->wheel_rot+this->car_speed*delta_t);
+	if (this->wheel_rot > 360)
+		this->wheel_rot -= 360;
 	this->x = this->x - delta_t*this->car_speed*sin(this->theta*M_PI/180);
 	this->y = this->y + delta_t*this->car_speed*cos(this->theta*M_PI/180);
 	this->theta = this->theta + delta_t*this->car_speed*tan(this->wheel_angle*M_PI/180);
@@ -178,9 +185,9 @@ void Car::forward(float delta_t){
 }
 
 void Car::back(float delta_t){
-	this->wheel_sprite = (this->wheel_sprite-this->car_speed*delta_t*8/this->size);
-	if (this->wheel_sprite < 0)
-		this->wheel_sprite += 4;
+	this->wheel_rot = (this->wheel_rot-this->car_speed*delta_t);
+	if (this->wheel_rot < 0)
+		this->wheel_rot += 360;
 	this->x = this->x + delta_t*this->car_speed*sin(this->theta*M_PI/180);
 	this->y = this->y - delta_t*this->car_speed*cos(this->theta*M_PI/180);
 	this->theta = this->theta - delta_t*this->car_speed*tan(this->wheel_angle*M_PI/180);
@@ -197,6 +204,14 @@ void Car::inc_cannon_angle(float angle){
 		this->cannon_angle = 45;
 	if (this->cannon_angle < -45)
 		this->cannon_angle = -45;
+}
+
+void Car::inc_cannon_phi(float angle){
+	this->cannon_phi += (angle);
+	if (this->cannon_phi > 45)
+		this->cannon_phi = 45;
+	if (this->cannon_phi < 0)
+		this->cannon_phi = 0;
 }
 
 void Car::set_pos(float x,float y, float theta){
@@ -248,6 +263,13 @@ float Car::get_theta(){
 
 float Car::get_size(){
 	return this->size;
+}
+
+float Car::get_cannon_theta(){
+	return this->cannon_angle;
+}
+float Car::get_cannon_phi(){
+	return this->cannon_phi;
 }
 
 void Car::set_cannon_angle(float angle){

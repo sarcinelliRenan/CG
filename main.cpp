@@ -20,9 +20,12 @@ using namespace tinyxml2;
 
 GLuint carTex;
 GLuint gunTex;
+GLuint gndTex;
+GLuint walTex;
+GLuint strTex;
 
 int keystatus[256];
-float last_x;
+float last_x,last_y;
 std::vector<Car> enemies;
 std::vector<Shot> player_bullets;
 std::vector<Shot> enemy_bullets;
@@ -99,6 +102,31 @@ void PrintTime(GLfloat x, GLfloat y)
 
 }
 
+void draw_arena(void){
+
+		glColor3f(1,1,1);
+
+		draw_ground(lane[OUT],gndTex);
+		draw_inner_wall(lane[IN],walTex, player.get_size()*2);
+		draw_out_wall(lane[OUT],walTex, player.get_size()*2);
+		draw_start_mark(startMark,strTex);
+
+		for(std::vector<Car>::iterator it = enemies.begin() ; it != enemies.end(); ++it){
+			it->draw();
+		} 
+
+		player.draw();
+
+		for(std::vector<Shot>::iterator it = enemy_bullets.begin() ; it != enemy_bullets.end(); ++it){
+			it->draw();
+		} 
+
+		for(std::vector<Shot>::iterator it = player_bullets.begin() ; it != player_bullets.end(); ++it){
+			it->draw();
+		}
+
+}
+
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -112,11 +140,15 @@ void display(void)
 		YouWin();
 		PrintTime(0,-0.5);
 	}else{	
-//	glColor3f(1,1,1);
+
+	glViewport(0,0,500,500);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(60.0f, 1, 0.01, 3000);
 	glMatrixMode(GL_MODELVIEW);
 	//PrintTime(lane[OUT].cx+lane[OUT].radius-82,lane[OUT].cy+lane[OUT].radius-12);	
 		
-/*	    gluLookAt(	player.get_x()-(player.get_size()/12)*cos(player.get_theta()*M_PI/180),
+	   /* gluLookAt(	player.get_x()-(player.get_size()/12)*cos(player.get_theta()*M_PI/180),
 					player.get_y()-(player.get_size()/12)*sin(player.get_theta()*M_PI/180),
 					player.get_size()/2,
 					player.get_x()-100*sin(player.get_theta()*M_PI/180),
@@ -124,6 +156,37 @@ void display(void)
 					player.get_size()/2,
 					0, 0, 1.0);
 */
+		float cannon_x = (1.79612187838555+7.93621087778903)*0.00234324850820599-0.001;
+		float cannon_z = (36.7102507390688-35.6207264253114)*0.00234324850820599;
+		float cannon_y = (162.187749878032-88.1413474731246)*0.00234324850820599;
+
+/*	glPushMatrix();
+		glTranslatef(player.get_x(),player.get_y(),player.get_size()/5.3);
+		glRotatef(player.get_theta(),0,0,1);
+		glRotatef(0,0,0,1);
+		glRotatef(90,1,0,0);
+		glScalef(player.get_size(),player.get_size(),player.get_size());
+
+		gluLookAt(	cannon_x-0.02*sin(player.get_theta()*M_PI/180)*sin(0*M_PI/180) , cannon_y+0.02*cos(0*M_PI/180), cannon_z+0.02*sin(0*M_PI/180)*cos(player.get_theta()*M_PI/180),
+						cannon_x+sin(player.get_theta()*M_PI/180)*cos(0*M_PI/180), cannon_y+sin(0*M_PI/180),cannon_z-cos(player.get_theta()*M_PI/180)*cos(0*M_PI/180),
+						0, 1, 0);
+		glPopMatrix();
+/*
+		/*gluLookAt(player.get_x() + (cannon_x-0.02*sin(player.get_theta()*M_PI/180))*player.get_size(),
+				  player.get_y() + (cannon_z + 0.02*cos(player.get_theta()*M_PI/180))*player.get_size(),	
+				  player.get_size()*(12/30) + (cannon_y + 0.02)*player.get_size(), 
+				  (cannon_x+sin(player.get_theta()*M_PI/180))*100*player.get_size(), 
+				  cannon_y*100*player.get_size(),
+				  (cannon_z-cos(player.get_theta()*M_PI/180))*player.get_size(),
+				  0, 0, 1.0);
+
+		gluLookAt(	player.get_x()-(player.get_size()/12)*cos(player.get_theta()*M_PI/180),
+					player.get_y()-(player.get_size()/12)*sin(player.get_theta()*M_PI/180),
+					player.get_size()/2,
+					player.get_x()-100*sin(player.get_theta()*M_PI/180),
+					player.get_y()+100*cos(player.get_theta()*M_PI/180),
+					player.get_size()/2,
+					0, 0, 1.0); 
 
 	    gluLookAt(	player.get_x()+(player.get_size())*sin(player.get_theta()*M_PI/180),
 			player.get_y()-(player.get_size())*cos(player.get_theta()*M_PI/180),
@@ -134,32 +197,71 @@ void display(void)
 			0, 0, 1.0);
 
 
+		
 
-		//draw_circle(lane[OUT]);
-		//draw_circle(lane[IN]);
 
-		//draw_rectangle(startMark);
+*/
+	float x = player.get_x() + (cannon_x*cos(player.get_theta()*M_PI/180.0)-cannon_z*sin(player.get_theta()*M_PI/180.0))*player.get_size();
+	float y = player.get_y() + (cannon_x*sin(player.get_theta()*M_PI/180.0)+cannon_z*cos(player.get_theta()*M_PI/180.0))*player.get_size();
+	float z = player.get_size()*(12.0/30.0) + (cannon_y +0.02)*player.get_size();
+//	printf("%f, %f, %f\n", x-(sin((player.get_theta()+player.get_cannon_theta())*M_PI/180)), y+(cos((player.get_theta()+player.get_cannon_theta())*M_PI/180)), z);
 
-		for(std::vector<Car>::iterator it = enemies.begin() ; it != enemies.end(); ++it){
-			it->draw();
-		} 
+	gluLookAt(		  x,
+				  y,	
+				  z, 
+				  x-(sin((player.get_theta()+player.get_cannon_theta())*M_PI/180)), 
+				  y+(cos((player.get_theta()+player.get_cannon_theta())*M_PI/180)),
+				  z,
+				  0, 0, 1.0);
+/*
+		glPushMatrix();
+		glDisable(GL_TEXTURE_2D);
+		glPushMatrix();
+			glColor3f(0,0.9,0);
+			glTranslatef(x, y,z);
+			glutSolidSphere(1.8,10,10);
+			glColor3f(0,0.9,0);
+			
+			glColor3f(0,0.9,0.9);
+			glRotatef(player.get_theta()+player.get_cannon_theta(),0,0,1);
+			glTranslatef(0,10,0);
+			glutSolidSphere(1,10,10);
+		glPopMatrix();
+		glPushMatrix();
+			glColor3f(0.9,0,0);
+			glTranslatef(x-(10*sin((player.get_theta()+player.get_cannon_theta())*M_PI/180)), 
+				  y+(10*cos((player.get_theta()+player.get_cannon_theta())*M_PI/180)),
+				  z);
+			glutSolidSphere(1,10,10);
+		glPopMatrix();
+*/		
+		glEnable(GL_TEXTURE_2D);
+		
+		draw_arena();
 
-		player.draw();
+		
+		glViewport(0,500,500,200);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(60.0f, 2.5, 0.01, 3000);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+	    gluLookAt(	player.get_x(),
+					player.get_y(),
+					player.get_size()/2.5,
+					player.get_x()-100*sin((player.get_theta()+180)*M_PI/180),
+					player.get_y()+100*cos((player.get_theta()+180)*M_PI/180),
+					player.get_size()/2.5,
+					0, 0, 1.0);
 
-		for(std::vector<Shot>::iterator it = enemy_bullets.begin() ; it != enemy_bullets.end(); ++it){
-		//	it->draw();
-		} 
-
-		for(std::vector<Shot>::iterator it = player_bullets.begin() ; it != player_bullets.end(); ++it){
-		//	it->draw();
-		}
+		draw_arena();
 	}
 	  glutSwapBuffers();
 }
 
 void init (void){
-	GLfloat light_diffuse[] = {1.0,1.0, 1.0, 1.0};  /* Red diffuse light. */
-	GLfloat light_position[] = {lane[OUT].cx, lane[OUT].cy , -10, 1.0};
+	GLfloat light_diffuse[] = {1.0,1.0, 1.0, 1.0};  
+	GLfloat light_position[] = {lane[OUT].cx, lane[OUT].cy , player.get_size()*10, 1.00};
 
 	glClearColor(1,1,1,0.0);
 	glClearDepth(10.0f);                   // Set background depth to farthest
@@ -178,13 +280,18 @@ void init (void){
 	//glLightfv(GL_LIGHT0, GL_SPECULAR, light_diffuse);
 	//glMaterialf(GL_FRONT, GL_SHININESS, 255.0f);
    	glEnable(GL_LIGHT0);
-   	glEnable(GL_LIGHTING);
+//  	glEnable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_COLOR_MATERIAL);
+		glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+	glEnable(GL_NORMALIZE);
 	carTex = LoadTextureRAW("models/chassi/Tex_0020_1.png");
 	gunTex = LoadTextureRAW("models/gun/Tex_0019_1.png");
+	gndTex = LoadTextureRAW("models/ground.png");
+	walTex = LoadTextureRAW("models/fence.png");
+	strTex = LoadTextureRAW("models/start.png");
    	glDepthFunc(GL_LEQUAL);    // Set the type of depth-test
-   	//glShadeModel(GL_SMOOTH);   // Enable smooth shading
+   	glShadeModel(GL_SMOOTH);   // Enable smooth shading
 }
 
 void svgParser(const char* path){
@@ -266,7 +373,7 @@ void svgParser(const char* path){
 		r.r = r.g = r.b = 1;
 	}
 	startMark = r;
-	glutInitWindowSize(2*lane[OUT].radius,2*lane[OUT].radius);
+
 
 }
 
@@ -381,7 +488,7 @@ void idle(void)
 		if (enemy_last_shot < cur_time){
 			Shot bullet = enemies.at(j).fire();
 			bullet.set_max_distance (lane[OUT].radius*2);     	
-			enemy_bullets.push_back(bullet);
+//			enemy_bullets.push_back(bullet);
 		}
 	}
 	if (enemy_last_shot < cur_time){
@@ -451,6 +558,8 @@ void mouseMove(int x, int y)
 {
 	player.inc_cannon_angle((last_x-x)/4.0);
 	last_x = x;
+	player.inc_cannon_phi((last_y-y)/4.0);
+	last_y = y;
 	glutPostRedisplay();
 }
 
@@ -475,6 +584,7 @@ int main (int argc, char** argv){
 
 	parser(path.c_str());
 
+	glutInitWindowSize(500,700);
 	glutCreateWindow("TC2");
 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB| GLUT_DEPTH);
 	glutInitWindowPosition(0,0);

@@ -12,8 +12,8 @@ extern GLuint gunTex;
 
 class Car : public GameObject{
 	float wheel_angle;
-	float cannon_angle;
-	float wheel_sprite;
+	float cannon_angle,cannon_phi;
+	float wheel_rot;
 	float r,g,b;
 	float car_speed,shot_speed,rotate_speed;
 	double fire_flag;
@@ -30,6 +30,7 @@ class Car : public GameObject{
 		void set_size(float size);
 		void draw(void);
 		void inc_cannon_angle(float angle);
+		void inc_cannon_phi(float angle);
 		void set_cannon_angle(float angle);
 		void left(float delta_t);
 		void right(float delta_t);
@@ -47,6 +48,8 @@ class Car : public GameObject{
 		float get_y();
 		float get_theta();
 		float get_size();
+		float get_cannon_theta();
+		float get_cannon_phi();
 };	
 
 #endif
