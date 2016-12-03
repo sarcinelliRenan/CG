@@ -77,3 +77,88 @@ GLuint LoadTextureRAW( const char * filename )
 
     return texture;
 }
+
+void draw_ground(Circle lane,GLuint gndTex){
+
+	glBindTexture( GL_TEXTURE_2D, gndTex );
+
+	glBegin(GL_QUADS);
+		glNormal3f(0,0,1);
+		glTexCoord2f(0,0);
+		glVertex3f(lane.cx-lane.radius	,lane.cy-lane.radius	,0.0);
+		glTexCoord2f(0,1);
+		glVertex3f(lane.cx-lane.radius	,lane.cy+lane.radius	,0.0);
+		glTexCoord2f(1,1);
+		glVertex3f(lane.cx+lane.radius	,lane.cy+lane.radius	,0.0);
+		glTexCoord2f(1,0);
+		glVertex3f(lane.cx+lane.radius	,lane.cy-lane.radius	,0.0);
+	glEnd();
+
+}
+
+void draw_inner_wall(Circle circ,GLuint wallTex, float height){
+	glBindTexture( GL_TEXTURE_2D, wallTex );
+
+
+	for (int i=0; i < 360; i+=18)
+	{
+		float degInRad1 = i*DEG2RAD;
+		float degInRad  = (i+9)*DEG2RAD;
+		float degInRad2 = (i+18)*DEG2RAD;
+
+		glBegin(GL_QUADS);
+			glNormal3f(cos(degInRad)*circ.radius+circ.cx,sin(degInRad)*circ.radius+circ.cy,0);
+			glTexCoord2f(0,0);
+			glVertex3f(cos(degInRad1)*circ.radius+circ.cx,sin(degInRad1)*circ.radius+circ.cy,0);
+			glTexCoord2f(0,1);
+			glVertex3f(cos(degInRad1)*circ.radius+circ.cx,sin(degInRad1)*circ.radius+circ.cy,height);
+			glTexCoord2f(1,1);
+			glVertex3f(cos(degInRad2)*circ.radius+circ.cx,sin(degInRad2)*circ.radius+circ.cy,height);
+			glTexCoord2f(1,0);
+			glVertex3f(cos(degInRad2)*circ.radius+circ.cx,sin(degInRad2)*circ.radius+circ.cy,0);
+		glEnd();
+	}
+
+}
+
+void draw_out_wall(Circle circ,GLuint wallTex, float height){
+	glBindTexture( GL_TEXTURE_2D, wallTex );
+
+
+	for (int i=0; i < 360; i+=18)
+	{
+		float degInRad1 = i*DEG2RAD;
+		float degInRad  = (i+9)*DEG2RAD;
+		float degInRad2 = (i+18)*DEG2RAD;
+
+		glBegin(GL_QUADS);
+			glNormal3f(-cos(degInRad)*circ.radius+circ.cx,-sin(degInRad)*circ.radius+circ.cy,0);
+			glTexCoord2f(0,0);
+			glVertex3f(cos(degInRad1)*circ.radius+circ.cx,sin(degInRad1)*circ.radius+circ.cy,0);
+			glTexCoord2f(0,1);
+			glVertex3f(cos(degInRad1)*circ.radius+circ.cx,sin(degInRad1)*circ.radius+circ.cy,height);
+			glTexCoord2f(1,1);
+			glVertex3f(cos(degInRad2)*circ.radius+circ.cx,sin(degInRad2)*circ.radius+circ.cy,height);
+			glTexCoord2f(1,0);
+			glVertex3f(cos(degInRad2)*circ.radius+circ.cx,sin(degInRad2)*circ.radius+circ.cy,0);
+		glEnd();
+	}
+
+}
+
+void draw_start_mark(Rectangle rect,GLuint strTex){
+	glBindTexture( GL_TEXTURE_2D, strTex );
+
+	glBegin(GL_QUADS);
+		glNormal3f(0,0,1);
+		glTexCoord2f(0,0);
+		glVertex3f(rect.x			,rect.y			,0.1);
+		glTexCoord2f(0,1);
+		glVertex3f(rect.x+rect.w	,rect.y			,0.1);
+		glTexCoord2f(1,1);
+		glVertex3f(rect.x+rect.w	,rect.y+rect.h	,0.1);
+		glTexCoord2f(1,0);
+		glVertex3f(rect.x			,rect.y+rect.h	,0.1);
+	glEnd();
+}
+
