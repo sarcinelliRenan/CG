@@ -38,8 +38,8 @@ void Shot::set_phi(float phi){
 }
 
 bool Shot::refresh_pos(float delta_t){
-	this->x = this->x - delta_t*this->speed*sin(this->theta*M_PI/180);
-	this->y = this->y + delta_t*this->speed*cos(this->theta*M_PI/180);
+	this->x = this->x - delta_t*this->speed*sin(this->theta*M_PI/180)*cos(this->phi*M_PI/180);
+	this->y = this->y + delta_t*this->speed*cos(this->theta*M_PI/180)*cos(this->phi*M_PI/180);
 	this->z = this->z + delta_t*this->speed*sin(this->phi*M_PI/180);
 	if ((this->distance -= this->speed*delta_t) < 0)
 		return false;
