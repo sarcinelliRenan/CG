@@ -92,7 +92,7 @@ void draw_ground(Circle lane, GLuint gndTex){
 
 	glPushMatrix();
 	glTranslatef(lane.cx, lane.cy, 0);
-	GLUquadricObj* quadric = gluNewQuadric();
+	GLUquadriObj* quadric = gluNewQuadric();
 	gluQuadricNormals(quadric, GLU_SMOOTH);
 	gluDisk(quadric,  0, lane.radius,  30,  30); 	
 	glPopMatrix();

@@ -211,13 +211,13 @@ void display(void)
 		}
 		else if(camera == 2) { 
 			
-	//		gluLookAt(	  x ,
-	//					  y,	
-	//					  z, 
-	//					  x-(10*sin((player.get_theta()+player.get_cannon_theta())*M_PI/180)*cos(player.get_cannon_phi()*M_PI/180)), 
-	//					  y+(10*cos((player.get_theta()+player.get_cannon_theta())*M_PI/180)+cos(player.get_cannon_phi()*M_PI/180)),
-	//					  z+10*sin(player.get_cannon_phi()*M_PI/180),
-	//					  0, 0, 1.0);	
+			gluLookAt(	  x ,
+						  y,	
+						  z, 
+						  x-(10*sin((player.get_theta()+player.get_cannon_theta())*M_PI/180)*cos(player.get_cannon_phi()*M_PI/180)), 
+						  y+(10*cos((player.get_theta()+player.get_cannon_theta())*M_PI/180)+cos(player.get_cannon_phi()*M_PI/180)),
+						  z+10*sin(player.get_cannon_phi()*M_PI/180),
+						  0, 0, 1.0);	
 		}
 		else { 
 			if (rot_phi==90){
