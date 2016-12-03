@@ -17,10 +17,11 @@ class Shot : public GameObject{
 		void set_size(float size);
 		void draw(void);
 		void set_pos(float x,float y, float tetha);
+		void set_phi(float phi);
 		bool refresh_pos(float delta_t);
 		void set_speed(float speed);
 		void set_max_distance(float distance);
-		
-};	
+
+};
 
 #endif

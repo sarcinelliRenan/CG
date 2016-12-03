@@ -8,6 +8,7 @@ Shot::Shot (){
 	this->x = 0;
 	this->y = 0;
 	this->theta = 0;
+	this->phi = 0;
 	this->distance = 500;
 	this->speed = 0;
 }
@@ -31,20 +32,23 @@ void Shot::set_pos(float x, float y, float theta){
 	this->y = y;
 	this->theta = theta;
 }
+
+void Shot::set_phi(float phi){
+	this->phi = phi;
+}
+
 bool Shot::refresh_pos(float delta_t){
 	this->x = this->x - delta_t*this->speed*sin(this->theta*M_PI/180);
 	this->y = this->y + delta_t*this->speed*cos(this->theta*M_PI/180);
+	this->z = this->z + delta_t*this->speed*sin(this->phi*M_PI/180);
 	if ((this->distance -= this->speed*delta_t) < 0)
 		return false;
 	return true;
 }
 void Shot::draw(void){
 	glPushMatrix();
-		glTranslatef(this->x,this->y,0);	
-		glRotatef(this->theta,0,0,1);
-		draw_circ(this->size,this->r,this->g,this->b,10);
-		glTranslatef(0,-this->size/2,0);
-		draw_rect(this->size*2,this->size,this->r,this->g,this->b);
+		glTranslatef(this->x, this->y, this->z);
+		glColor3f(this->r, this->g, this->b);
+		glutSolidSphere(this->size, 10, 10);
 	glPopMatrix();
 }
-
