@@ -82,21 +82,21 @@ void draw_ground(Circle lane, GLuint gndTex){
 
 	glBindTexture( GL_TEXTURE_2D, gndTex );
 
-	GLfloat qaWhite[] = {.5, .5, .5, 1.0}; //White Color
+//	GLfloat qaWhite[] = {.5, .5, .5, 1.0}; //White Color
 //	GLfloat emission[] = {0.0,0.0,0.0,1.0};
 
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, qaWhite);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, qaWhite);
-	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 20);
+//	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, qaWhite);
+//	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, qaWhite);
+//	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 20);
 //	glMaterialf(GL_FRONT_AND_BACK, GL_EMISSION, emission);
 
-	glPushMatrix();
+/*	glPushMatrix();
 	glTranslatef(lane.cx, lane.cy, 0);
 	GLUquadricObj* quadric = gluNewQuadric();
 	gluQuadricNormals(quadric, GLU_SMOOTH);
 	gluDisk(quadric,  0, lane.radius,  30,  30); 	
-	glPopMatrix();
-/*	glBegin(GL_QUADS);
+	glPopMatrix();*/
+	glBegin(GL_QUADS);
 		glNormal3f(0,0,1);
 		glTexCoord2f(0,0);
 		glVertex3f(lane.cx-lane.radius	,lane.cy-lane.radius	,0.0);
@@ -107,7 +107,7 @@ void draw_ground(Circle lane, GLuint gndTex){
 		glTexCoord2f(1,0);
 		glVertex3f(lane.cx+lane.radius	,lane.cy-lane.radius	,0.0);
 	glEnd();
-*/
+
 
 }
 

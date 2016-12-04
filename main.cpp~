@@ -23,6 +23,8 @@ GLuint gunTex;
 GLuint gndTex;
 GLuint walTex;
 GLuint strTex;
+GLuint losTex;
+GLuint winTex;
 
 int keystatus[256];
 float last_x,last_y;
@@ -53,6 +55,7 @@ void GameOver()
 {
 	glMatrixMode(GL_PROJECTION);
 	glColor3f(1,0,0);
+	glLoadIdentity();
     //Create a string to be printed
 	static char str[10];
     char *tmpStr;
@@ -72,7 +75,6 @@ void GameOver()
 
 void YouWin()
 {
-	glMatrixMode(GL_PROJECTION);
 	glColor3f(0,1,0);
     //Create a string to be printed
 	static char str[10];
@@ -178,11 +180,38 @@ void display(void)
 	glLoadIdentity();
 	
 	if (win == -1){
-		GameOver();
-		PrintTime(0,-0.5);
+		glClearColor(0,0,0,0.0);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_DEPTH_TEST);
+		glViewport(0,0,500,500);	
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glDisable(GL_TEXTURE_2D);
+		PrintTime(-0.2,1.0);
+		glEnable(GL_TEXTURE_2D);
+		glMatrixMode(GL_MODELVIEW);
+		gluLookAt(0,0,1,0,0,0,0,1,0);
+		Circle c;
+		c.cx = c.cy = 0;
+		c.radius = 1;
+		draw_ground(c,losTex);
 	}else if(win == 1){
-		YouWin();
-		PrintTime(0,-0.5);
+		glClearColor(0,0,0,0.0);
+		glColor3f(1,1,1);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_DEPTH_TEST);
+		glViewport(0,0,500,500);	
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glDisable(GL_TEXTURE_2D);
+		PrintTime(-0.2,1.0);
+		glEnable(GL_TEXTURE_2D);
+		glMatrixMode(GL_MODELVIEW);
+		gluLookAt(0,0,1,0,0,0,0,1,0);
+		Circle c;
+		c.cx = c.cy = 0;
+		c.radius = 1;
+		draw_ground(c,winTex);
 	}else{	
 
 		glViewport(0,0,500,500);
@@ -196,9 +225,9 @@ void display(void)
 		float cannon_x = (1.79612187838555+7.93621087778903)*0.00234324850820599-0.001;
 		float cannon_z = (36.7102507390688-35.6207264253114)*0.00234324850820599;
 		float cannon_y = (162.187749878032-88.1413474731246)*0.00234324850820599;
-		float x = player.get_x() + (cannon_x*cos(player.get_theta()*M_PI/180.0)-cannon_z*sin(player.get_theta()*M_PI/180.0))*player.get_size()-0.02*sin(player.get_cannon_phi()*M_PI/180)*sin(player.get_cannon_theta()*M_PI/180)*player.get_size();
-		float y = player.get_y() + (cannon_x*sin(player.get_theta()*M_PI/180.0)+cannon_z*cos(player.get_theta()*M_PI/180.0))*player.get_size()-0.02*sin(player.get_cannon_phi()*M_PI/180)*cos(player.get_cannon_theta()*M_PI/180)*player.get_size();
-		float z = player.get_size()/5.3 + (cannon_y )*player.get_size();
+		float x = player.get_x() + (cannon_x*cos(player.get_theta()*M_PI/180.0)-cannon_z*sin(player.get_theta()*M_PI/180.0))*player.get_size();
+		float y = player.get_y() + (cannon_x*sin(player.get_theta()*M_PI/180.0)+cannon_z*cos(player.get_theta()*M_PI/180.0))*player.get_size();
+		float z = player.get_size()/5.3 + (cannon_y)*player.get_size();
 
 		if(camera == 1)	{
 			gluLookAt(  player.get_x()-(player.get_size()/12)*cos(player.get_theta()*M_PI/180),
@@ -209,15 +238,14 @@ void display(void)
 						player.get_size()/4,
 						0, 0, 1.0);
 		}
-		else if(camera == 2) { 
-			
-			gluLookAt(	  x ,
-						  y,	
-						  z, 
-						  x-(10*sin((player.get_theta()+player.get_cannon_theta())*M_PI/180)*cos(player.get_cannon_phi()*M_PI/180)), 
-						  y+(10*cos((player.get_theta()+player.get_cannon_theta())*M_PI/180)+cos(player.get_cannon_phi()*M_PI/180)),
-						  z+10*sin(player.get_cannon_phi()*M_PI/180),
-						  0, 0, 1.0);	
+		else if(camera == 2) {
+			gluLookAt(	x+0.02*sin(player.get_cannon_phi()*M_PI/180)*sin(player.get_cannon_theta()*M_PI/180)*player.get_size(), 
+				  		y-0.02*sin(player.get_cannon_phi()*M_PI/180)*cos(player.get_cannon_theta()*M_PI/180)*player.get_size(),
+				  		z+0.02*cos(player.get_cannon_phi()*M_PI/180)*player.get_size(),
+						x-(15*sin((player.get_theta()+player.get_cannon_theta())*M_PI/180)*cos(player.get_cannon_phi()*M_PI/180)), 
+				  		y+(15*cos((player.get_theta()+player.get_cannon_theta())*M_PI/180)*cos(player.get_cannon_phi()*M_PI/180)),
+				  		z+15*sin(player.get_cannon_phi()*M_PI/180),
+						0,0,1);
 		}
 		else { 
 			if (rot_phi==90){
@@ -251,25 +279,28 @@ void display(void)
 		
 		initLighting();
 
-		glDisable(GL_TEXTURE_2D);
-		glPushMatrix();
-			glColor3f(0.9,0,0);
-			glTranslatef(x-(20*sin((player.get_theta()+player.get_cannon_theta())*M_PI/180)*cos(player.get_cannon_phi()*M_PI/180)), 
-				  y+(20*cos((player.get_theta()+player.get_cannon_theta())*M_PI/180)*cos(player.get_cannon_phi()*M_PI/180)),
-				  z+20*sin(player.get_cannon_phi()*M_PI/180));
-			glutSolidSphere(1,10,10);
-		glPopMatrix();
+		if (keystatus[' ']){
+			glDisable(GL_TEXTURE_2D);
+			glPushMatrix();
+				glColor3f(0.9,0,0);
+				glTranslatef(x-(15*sin((player.get_theta()+player.get_cannon_theta())*M_PI/180)*cos(player.get_cannon_phi()*M_PI/180)), 
+					  y+(15*cos((player.get_theta()+player.get_cannon_theta())*M_PI/180)*cos(player.get_cannon_phi()*M_PI/180)),
+					  z+15*sin(player.get_cannon_phi()*M_PI/180));
+				glutSolidSphere(1,10,10);
+			glPopMatrix();
 
-		glPushMatrix();
-			glColor3f(0,0.9,0);
-			glTranslatef(x, 
-				  y,
-				  z+0.02*cos(player.get_cannon_phi()*M_PI/180)*player.get_size());
-			glutSolidSphere(1,10,10);
-		glPopMatrix();
-		glEnable(GL_TEXTURE_2D);
-
-		draw_arena();
+			glPushMatrix();
+				glColor3f(0,0.9,0);
+				glTranslatef(x+0.05*sin(player.get_cannon_phi()*M_PI/180)*sin(player.get_cannon_theta()*M_PI/180)*player.get_size(), 
+					  y-0.05*sin(player.get_cannon_phi()*M_PI/180)*cos(player.get_cannon_theta()*M_PI/180)*player.get_size(),
+					  z+0.05*cos(player.get_cannon_phi()*M_PI/180)*player.get_size());
+				glutSolidSphere(1,10,10);
+			glPopMatrix();
+			glEnable(GL_TEXTURE_2D);
+		}
+		
+		if(win ==0)
+			draw_arena();
 
 		glViewport(0,500,500,200);
 		glMatrixMode(GL_PROJECTION);
@@ -286,7 +317,7 @@ void display(void)
 					player.get_size()/2.5,
 					0, 0, 1.0);
 		initLighting();
-		draw_arena();
+			draw_arena();
 	}
 	 glutSwapBuffers();
 }
@@ -310,6 +341,8 @@ void init (void){
 	gndTex = LoadTextureRAW("models/ground.png");
 	walTex = LoadTextureRAW("models/fence.png");
 	strTex = LoadTextureRAW("models/start.png");
+	losTex = LoadTextureRAW("models/lose.png");
+	winTex = LoadTextureRAW("models/win.png");	
    	glDepthFunc(GL_LEQUAL);    // Set the type of depth-test
    	glShadeModel(GL_SMOOTH);   // Enable smooth shading
 }
@@ -501,6 +534,8 @@ void idle(void)
 		if (!enemy_bullets.at(i).refresh_pos(delta)){
 			enemy_bullets.erase(enemy_bullets.begin()+i);
 		}else{
+			if (enemy_bullets.at(i).get_z()>player.get_size())
+				break;
 			GameObject* enemy_b = &enemy_bullets.at(i);
 			if (player.colide(enemy_b)){
 				enemy_bullets.erase(enemy_bullets.begin()+i);
@@ -520,7 +555,7 @@ void idle(void)
 		if (enemy_last_shot < cur_time){
 			Shot bullet = enemies.at(j).fire();
 			bullet.set_max_distance (lane[OUT].radius*2);     	
-//			enemy_bullets.push_back(bullet);
+			enemy_bullets.push_back(bullet);
 		}
 	}
 	if (enemy_last_shot < cur_time){
@@ -574,6 +609,8 @@ void idle(void)
 		}else{
 			for (int j=0; j < enemies.size(); j++){
 				GameObject* enemy = &enemies.at(j);
+				if (player_bullets.at(i).get_z()>player.get_size()*0.5)
+					break;
 				if (player_bullets.at(i).colide(enemy)){
 					player_bullets.erase(player_bullets.begin()+i);
 					enemies.erase(enemies.begin()+j);
@@ -641,7 +678,7 @@ int main (int argc, char** argv){
 	parser(path.c_str());
 
 	glutInitWindowSize(500,700);
-	glutCreateWindow("TC2");
+	glutCreateWindow("Tank war");
 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB| GLUT_DEPTH);
 	glutInitWindowPosition(0,0);
 	init();

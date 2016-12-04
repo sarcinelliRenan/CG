@@ -235,15 +235,18 @@ bool Car::on_lane(Circle lane_in, Circle lane_out){
 Shot Car::fire (){
 	fire_flag = glutGet(GLUT_ELAPSED_TIME)+(GLdouble)100.0;
 	Shot s;
-	s.set_size(this->size/100);
+	s.set_size(this->size/120);
 	s.set_speed(this->shot_speed);
 	float cannon_x = (1.79612187838555+7.93621087778903)*0.00234324850820599-0.001;
 	float cannon_z = (36.7102507390688-35.6207264253114)*0.00234324850820599;
 	float cannon_y = (162.187749878032-88.1413474731246)*0.00234324850820599;
 	float x = this->x + (cannon_x*cos(this->theta*M_PI/180.0)-cannon_z*sin(this->theta*M_PI/180.0))*this->size;
 	float y = this->y + (cannon_x*sin(this->theta*M_PI/180.0)+cannon_z*cos(this->theta*M_PI/180.0))*this->size;
-	float z = this->size/5.3 + (cannon_y +0.02)*this->size;
-	s.set_pos3d(x,y,z,this->theta+this->cannon_angle,this->cannon_phi);
+	float z = this->size/5.3 + (cannon_y)*this->size;
+	s.set_pos3d(x-(18*sin((this->theta+this->cannon_angle)*M_PI/180)*cos(this->cannon_phi*M_PI/180)), 
+				y+(18*cos((this->theta+this->cannon_angle)*M_PI/180)*cos(this->cannon_phi*M_PI/180)),
+				z+18*sin(this->cannon_phi*M_PI/180),
+				this->theta+this->cannon_angle,this->cannon_phi);
 	return s;
 }
 

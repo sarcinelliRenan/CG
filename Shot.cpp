@@ -59,3 +59,7 @@ void Shot::draw(void){
 		glEnable(GL_TEXTURE_2D);
 	glPopMatrix();
 }
+
+float Shot::get_z(void){
+	return this->z;
+}

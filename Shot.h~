@@ -24,7 +24,7 @@ class Shot : public GameObject{
 		bool refresh_pos(float delta_t);
 		void set_speed(float speed);
 		void set_max_distance(float distance);
-		float get_z(void);
+		float get_z(void)
 };
 
 #endif
