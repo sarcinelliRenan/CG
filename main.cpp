@@ -115,6 +115,9 @@ void PrintTime(GLfloat x, GLfloat y)
 
 void draw_arena(void){
 
+		if (keystatus['t']||keystatus['T'])
+			glDisable(GL_TEXTURE_2D);
+
 		glColor3f(1,1,1);
 
 		draw_ground(lane[OUT],gndTex);
@@ -145,9 +148,11 @@ void initLighting()
 	GLfloat qaAmbientLight[]    = {0.1, 0.1, 0.1, 1.0};
 	GLfloat qaDiffuseLight[]    = {1, 1, 1, 1.0};
 	GLfloat qaSpecularLight[]   = {1.0, 1.0, 1.0, 1.0};
-	GLfloat qaLightPosition[]   = {lane[OUT].cx, lane[OUT].cy, player.get_size()*10};	
-    glEnable(GL_LIGHT0);
-
+	GLfloat qaLightPosition[]   = {lane[OUT].cx, lane[OUT].cy, player.get_size()*10};
+	if (keystatus['l']||keystatus['L'])
+    	glDisable(GL_LIGHT0);
+	else
+		glEnable(GL_LIGHT0);
     // Set lighting intensity and color
     glLightfv(GL_LIGHT0, GL_AMBIENT, qaAmbientLight);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, qaDiffuseLight);
@@ -178,7 +183,7 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glLoadIdentity();
-	
+
 	if (win == -1){
 		glClearColor(0,0,0,0.0);
 		glColor3f(1,1,1);
